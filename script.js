@@ -25,7 +25,7 @@ async function fetchPokemons() {
         }
 
         // Atualiza a contagem total de Pokémons carregados
-        loadedPokemonCount += loadedThisBatch;
+        loadedPokemonCount += loadedPokemons;
 
         // Desabilita o botão se atingir o número máximo de Pokémons
         if (loadedPokemonCount >= maxPokemonNumber) {
