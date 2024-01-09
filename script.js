@@ -5,37 +5,47 @@ let offset = 0;
 const maxPokemonNumber = 151;
 let loadedPokemonCount = 0;
 
+// Busca os Pokémons da API
 async function fetchPokemons() {
-    const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`);
-    const data = await response.json();
+    try {
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=20&offset=${offset}`);
+        const data = await response.json();
 
-    let loadedThisBatch = 0;
+        let loadedPokemons = 0;
 
-    for (const pokemon of data.results) {
-        const pokemonData = await fetch(pokemon.url).then(response => response.json());
+        // Itera sobre os resultados e exibe os Pokémons
+        for (const pokemon of data.results) {
+            const pokemonData = await fetch(pokemon.url).then(response => response.json());
 
-        if (pokemonData.id <= maxPokemonNumber) {
-            // Exibe apenas Pokémon da primeira geração
-            displayPokemon(pokemonData);
-            loadedThisBatch += 1;
+            // Verifica se o ID do Pokémon está dentro do limite
+            if (pokemonData.id <= maxPokemonNumber) {
+                displayPokemon(pokemonData);
+                loadedPokemons += 1;
+            }
         }
-    }
 
-    loadedPokemonCount += loadedThisBatch;
+        // Atualiza a contagem total de Pokémons carregados
+        loadedPokemonCount += loadedThisBatch;
 
-    if (loadedPokemonCount >= maxPokemonNumber) {
-        loadMoreButton.disabled = true;
+        // Desabilita o botão se atingir o número máximo de Pokémons
+        if (loadedPokemonCount >= maxPokemonNumber) {
+            loadMoreButton.disabled = true;
+        }
+    } catch (error) {
+        console.error("Erro ao buscar Pokémon:", error);
     }
 }
 
-
+// Adiciona um evento ao botão "Carregar Mais"
 loadMoreButton.addEventListener("click", () => {
+    // Verifica se ainda há Pokémon para carregar
     if (offset < maxPokemonNumber) {
         offset += 20;
         fetchPokemons();
     }
 });
 
+// Exibe informações dos Pokémons
 function displayPokemon(pokemon) {
     const card = document.createElement("div");
     card.classList.add("card");
@@ -50,12 +60,13 @@ function displayPokemon(pokemon) {
         <img class="image" src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
         <p class="id">#${pokemon.id}</p>
     </div>
-
     `;
 
+    // Adiciona o card ao contêiner da Pokédex
     pokedexContainer.appendChild(card);
 }
 
+// Obtem cor do tipo do Pokémon
 function getTypeColor(type) {
     const typeColors = {
         "grass": "#9bcc50",
@@ -80,5 +91,5 @@ function getTypeColor(type) {
     return typeColors[type] || "#A8A878";
 }
 
-
+// Inicia o carregamento dos Pokémons
 fetchPokemons();
