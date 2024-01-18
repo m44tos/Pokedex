@@ -82,7 +82,9 @@ display: flex
     color: white;
     text-align: right;
     margin-top: 10px;
+    margin-left: 80px;
     font-weight: 600;
+    position: absolute;
 }
 .name{
     color: white;
